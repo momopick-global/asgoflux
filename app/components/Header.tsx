@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const NAV = [
   { href: "/#work", label: "WORK" },
   { href: "/#service", label: "SERVICE" },
-  { href: "/#let's talk", label: "let's talk" },
+  { href: "/#lets-talk", label: "let's talk" },
 ];
 
 const SCROLL_THRESHOLD = 60;

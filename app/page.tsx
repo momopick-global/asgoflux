@@ -29,8 +29,8 @@ export default function Home() {
               className="mt-12 w-full font-medium leading-[0.85] text-black mb-16 text-left"
               style={{ fontSize: "clamp(3.5rem, 20vw, 12rem)", letterSpacing: "-0.04em" }}
             >
-Designing structure and flow that drive decisions.
-/h1>
+              Designing structure and flow that drive decisions.
+            </h1>
             <p className="mt-4 w-full text-sm uppercase tracking-[0.35em] text-black/70 md:text-base">
             화려함보다 구조, 감성보다 흐름. 선택을 만드는 디자인을 만듭니다.
             </p>
@@ -128,7 +128,7 @@ ASOGFLUX는 빠르게 이해되고, 자연스럽게 이동하며, 망설임 없�
         </section>
 
         {/* let's talk*/}
-        <section id="let's talk" className="w-full border-t border-black/10 py-6">
+        <section id="lets-talk" className="w-full border-t border-black/10 py-6">
           <div className={`${CONTENT_MAX} ${CONTENT_PADDING} max-w-full lg:max-w-[60vw]`}>
           <p
               className="mt-0 text-left font-medium leading-[0.8] tracking-tight text-black"
