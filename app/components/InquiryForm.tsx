@@ -150,7 +150,7 @@ export function InquiryForm() {
 
       {/* 추가적인 정보 */}
       <div>
-        <h3 className="text-2xl font-medium tracking-tight text-black md:text-3xl">추가적인 정보를 선택해 주세요</h3>
+        <h3 className="text-xl font-medium tracking-tight text-black md:text-2xl">추가적인 정보를 선택해 주세요</h3>
         <p className="mt-1 text-xs text-black/50">선택 입력 사항이며, 여러 개를 선택할 수 있습니다.</p>
         <div className="mt-8 flex flex-col gap-10">
           <div>
@@ -196,7 +196,7 @@ export function InquiryForm() {
 
       {/* 의뢰하시는 분의 정보 */}
       <div>
-        <h3 className="text-2xl font-medium tracking-tight text-black md:text-3xl">의뢰하시는 분의 정보를 알려주세요</h3>
+        <h3 className="text-xl font-medium tracking-tight text-black md:text-2xl">의뢰하시는 분의 정보를 알려주세요</h3>
         <div className="mt-8 flex flex-col gap-8">
           <div>
             <label className="sr-only">회사 / 단체명</label>
@@ -256,7 +256,7 @@ export function InquiryForm() {
             onChange={(e) => setPrivacyAgree(e.target.checked)}
             className="mt-1 h-6 w-6 shrink-0 border-black/30 accent-black md:h-7 md:w-7"
           />
-          <span className="text-2xl font-medium tracking-tight text-black md:text-3xl">
+          <span className="text-xl font-medium tracking-tight text-black md:text-2xl">
             개인정보보호정책에 동의합니다.{" "}
             <button
               type="button"

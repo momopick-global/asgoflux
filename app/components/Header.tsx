@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const NAV = [
   { href: "/#work", label: "WORK" },
   { href: "/#service", label: "SERVICE" },
-  { href: "/#lets-talk", label: "let's talk" },
+  { href: "/#lets-talk", label: "LET'S TALK" },
 ];
 
 const SCROLL_THRESHOLD = 60;
@@ -15,6 +15,8 @@ const FADE_OUT_DURATION = 5; // 끝나기 5초 전부터 서서히 소리 감소
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [soundOn, setSoundOn] = useState(false);
   const [time, setTime] = useState("09:36 AM");
   const [scrolled, setScrolled] = useState(false);
@@ -110,6 +112,39 @@ export function Header() {
     return () => audio.removeEventListener("timeupdate", onTimeUpdate);
   }, []);
 
+  // 모바일 메뉴 열림: 배경 페이드 인, 닫힘: 페이드 아웃 후 언마운트
+  useEffect(() => {
+    if (menuOpen) {
+      const id = requestAnimationFrame(() => setMenuVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setMenuVisible(false);
+  }, [menuOpen]);
+
+  // 메뉴 열렸을 때 body 스크롤 잠금
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [menuOpen]);
+
+  const openMenu = () => setMenuOpen(true);
+
+  const closeMenu = () => {
+    setMenuVisible(false);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(() => setMenuOpen(false), 320);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
+  }, []);
+
   // 2초 동안 마우스·클릭·스크롤 없으면 헤더 숨김, 있으면 다시 표시
   useEffect(() => {
     const show = () => {
@@ -189,7 +224,7 @@ export function Header() {
             </button>
             <button
               type="button"
-              onClick={() => setMenuOpen(true)}
+              onClick={openMenu}
               className="flex h-9 w-9 items-center justify-center border border-black/20 md:hidden"
               aria-label="Open menu"
             >
@@ -212,30 +247,74 @@ export function Header() {
       </header>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] w-full bg-[#fafaf9]">
-          <div className="flex min-h-screen w-full flex-col px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
-            <div className="flex w-full items-center justify-between">
-              <span className="text-sm uppercase tracking-wider text-black/60">AsogFLUX</span>
-              <button type="button" onClick={() => setMenuOpen(false)} className="text-sm uppercase tracking-wider text-black">
-                close
+        <div
+          className={`fixed inset-0 z-[60] w-full overflow-y-auto bg-[#fafaf9] transition-transform duration-300 ease-out ${menuVisible ? "translate-x-0" : "translate-x-full"}`}
+          aria-hidden={!menuVisible}
+        >
+          <div className="flex min-h-screen w-full flex-col">
+            {/* 헤더와 동일한 높이·패딩으로 상단 바 정렬 (모바일에서 AsogFLUX 위치 일치) */}
+            <div className="sticky top-0 flex h-14 w-full shrink-0 items-center justify-between bg-[#fafaf9] px-4 sm:px-6 md:h-16 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+              <span className="text-sm font-medium tracking-wide text-black md:text-base">AsogFLUX</span>
+              <button
+                type="button"
+                onClick={closeMenu}
+                className="flex h-9 w-9 items-center justify-center border border-black/20 text-black transition-colors hover:bg-black hover:text-white md:h-10 md:w-10"
+                aria-label="Close menu"
+              >
+                <span className="sr-only">close</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
               </button>
             </div>
-            <nav className="flex flex-1 flex-col justify-center gap-6 py-12">
-              <a href="/" onClick={() => setMenuOpen(false)} className="text-3xl font-medium tracking-tight text-black md:text-4xl">
-                home
-              </a>
-              {NAV.map(({ href, label }) => (
-                <a key={href} href={href} onClick={() => setMenuOpen(false)} className="text-3xl font-medium tracking-tight text-black md:text-4xl">
-                  {label}
+            <div className="flex flex-1 flex-col px-4 pb-16 pt-10 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+              {/* 상단 메뉴: 중앙 정렬 제거하고 위로 올림 */}
+              <nav className="flex flex-col gap-6">
+                <a href="/" onClick={closeMenu} className="text-2xl font-medium tracking-tight text-black transition-opacity hover:opacity-70 md:text-3xl">
+                  HOME
                 </a>
-              ))}
-              <div className="mt-8 space-y-2 text-sm uppercase tracking-wider text-black/70">
-                <p>follow</p>
-                <a href="https://instagram.com/asogflux" target="_blank" rel="noopener noreferrer">instagram</a>
+                {NAV.map(({ href, label }) => (
+                  <a key={href} href={href} onClick={closeMenu} className="text-2xl font-medium tracking-tight text-black transition-opacity hover:opacity-70 md:text-3xl">
+                    {label}
+                  </a>
+                ))}
+              </nav>
+
+              {/* 푸터: 메뉴 열기 전 Footer와 동일한 콘텐츠 */}
+              <div className="mt-14 w-full border-t border-black/10 pt-12">
+                <div className="grid w-full gap-12 md:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-black/60">follow</p>
+                    <div className="mt-4 flex gap-6 text-sm text-black/80">
+                      <a href="https://instagram.com/asogflux" target="_blank" rel="noopener noreferrer">instagram</a>
+                    </div>
+                    <p className="mt-8 text-sm text-black/60">©2024 AsogFLUX</p>
+                    <p className="text-sm text-black/60">ALL RIGHTS RESERVED</p>
+                    <div className="mt-4 flex gap-6 text-xs text-black/50">
+                      <a href="/privacy-policy" onClick={closeMenu}>privacy policy</a>
+                      <a href="/terms" onClick={closeMenu}>terms of use</a>
+                    </div>
+                    <a href="#top" onClick={closeMenu} className="mt-6 inline-block text-xs uppercase tracking-wider text-black/60 hover:text-black">
+                      back to top
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-black/60">service</p>
+                    <div className="mt-4 flex flex-col gap-1 text-sm text-black/80">
+                      <a href="/#service" onClick={closeMenu}>Brand Design</a>
+                      <a href="/#service" onClick={closeMenu}>Digital Experience</a>
+                      <a href="/#service" onClick={closeMenu}>Design System</a>
+                      <a href="/#service" onClick={closeMenu}>Content &amp; Visual</a>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-black/60">AsogFLUX</p>
+                    <p className="mt-6 text-xs uppercase tracking-[0.2em] text-black/60">contact</p>
+                    <a href="mailto:momopick.global@gmail.com" className="mt-2 block text-sm text-black/80">momopick.global@gmail.com</a>
+                  </div>
+                </div>
               </div>
-              <p className="mt-4 text-sm text-black/60">reach out</p>
-              <a href="mailto:momopick.global@gmail.com" className="text-sm text-black/80">momopick.global@gmail.com</a>
-            </nav>
+            </div>
           </div>
         </div>
       )}
