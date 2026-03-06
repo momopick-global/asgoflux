@@ -15,7 +15,12 @@ const BG_VIDEOS = [
 ];
 
 export function HeroVideoLayer() {
-  const [videoSrc] = useState(() => BG_VIDEOS[Math.floor(Math.random() * BG_VIDEOS.length)]);
+  const [videoSrc, setVideoSrc] = useState(BG_VIDEOS[0]);
+
+  useEffect(() => {
+    setVideoSrc(BG_VIDEOS[Math.floor(Math.random() * BG_VIDEOS.length)]);
+  }, []);
+
   const [opacity, setOpacity] = useState(1);
   const videoRef = useRef<HTMLVideoElement>(null);
 
