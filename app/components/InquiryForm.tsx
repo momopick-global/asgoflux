@@ -43,7 +43,7 @@ const SYSTEM_SCOPE_OPTIONS = [
 ];
 
 // Formspree: https://formspree.io 에서 폼 생성 후 받은 ID로 교체하세요
-const FORMSPREE_FORM_ID = "YOUR_FORM_ID";
+const FORMSPREE_FORM_ID = "xjgabjqj";
 
 export function InquiryForm() {
   const [timeline, setTimeline] = useState("");
@@ -66,31 +66,33 @@ export function InquiryForm() {
     setSystemScope((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!privacyAgree) return;
-
-    const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        "착수 시점 / 기간": timeline,
-        "예상 예산": budget,
-        "프로젝트 설명": message,
-        "업무 범위": workScope.join(", "),
-        "시스템 범위": systemScope.join(", "),
-        "회사 / 단체명": company,
-        "연락처": phone,
-        "의뢰자명": name,
-        "이메일": email,
-      }),
-    });
-
-    if (res.ok) setSubmitted(true);
+  const handleSubmit = (e: React.FormEvent) => {
+    if (!privacyAgree) {
+      e.preventDefault();
+      return;
+    }
+    // 동의 시 네이티브 form submit 진행 (action으로 Formspree 전송)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full space-y-16">
+    <form
+      action={`https://formspree.io/f/${FORMSPREE_FORM_ID}`}
+      method="POST"
+      onSubmit={handleSubmit}
+      className="w-full space-y-16"
+    >
+      <input type="hidden" name="_subject" value="ASGOFLUX 프로젝트 문의" />
+      <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="absolute h-0 w-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden />
+
+      {/* 착수 시점 / 예산은 버튼 UI라 hidden으로 전달 */}
+      <input type="hidden" name="start_timing" value={timeline} />
+      <input type="hidden" name="budget" value={budget} />
+      {workScope.map((v) => (
+        <input key={v} type="hidden" name="work_scope" value={v} />
+      ))}
+      {systemScope.map((v) => (
+        <input key={v} type="hidden" name="system_scope" value={v} />
+      ))}
       {/* 프로젝트에 대해 알려주세요 */}
       <div>
         <div className="mt-8 space-y-10">
@@ -135,6 +137,7 @@ export function InquiryForm() {
           <div>
             <label className="mb-2 block text-sm text-black/70">프로젝트 설명 (선택)</label>
             <textarea
+              name="project_description"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="프로젝트 개요, 목표, 요청 사항을 간단히 적어 주세요."
@@ -199,6 +202,7 @@ export function InquiryForm() {
             <label className="sr-only">회사 / 단체명</label>
             <input
               type="text"
+              name="company"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               className="w-full border-0 border-b border-black/20 bg-transparent px-0 py-4 text-base text-black outline-none placeholder:text-lg placeholder:text-black/40 focus:border-black/50"
@@ -209,6 +213,7 @@ export function InquiryForm() {
             <label className="sr-only">연락처</label>
             <input
               type="tel"
+              name="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full border-0 border-b border-black/20 bg-transparent px-0 py-4 text-base text-black outline-none placeholder:text-lg placeholder:text-black/40 focus:border-black/50"
@@ -219,6 +224,7 @@ export function InquiryForm() {
             <label className="sr-only">의뢰자명</label>
             <input
               type="text"
+              name="client_name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full border-0 border-b border-black/20 bg-transparent px-0 py-4 text-base text-black outline-none placeholder:text-lg placeholder:text-black/40 focus:border-black/50"
@@ -229,6 +235,7 @@ export function InquiryForm() {
             <label className="sr-only">이메일</label>
             <input
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border-0 border-b border-black/20 bg-transparent px-0 py-4 text-base text-black outline-none placeholder:text-lg placeholder:text-black/40 focus:border-black/50"
@@ -243,6 +250,8 @@ export function InquiryForm() {
         <label className="flex cursor-pointer items-start gap-3">
           <input
             type="checkbox"
+            name="privacy_agree"
+            value="동의"
             checked={privacyAgree}
             onChange={(e) => setPrivacyAgree(e.target.checked)}
             className="mt-1 h-6 w-6 shrink-0 border-black/30 accent-black md:h-7 md:w-7"
