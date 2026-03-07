@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SmoothScroll } from "./components/SmoothScroll";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://asogflux.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://asgoflux.pages.dev";
+const OG_IMAGE_URL = `${SITE_URL}/images/og-image.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -28,13 +29,13 @@ export const metadata: Metadata = {
     title: "AsogFLUX | 브랜드·디지털 경험 디자인 스튜디오",
     description:
       "ASOGFLUX는 브랜딩과 디지털 경험을 설계하는 비주얼 디자인 스튜디오입니다.",
-    images: [{ url: "/images/og-image.png", width: 1200, height: 630, alt: "AsogFLUX" }],
+    images: [{ url: OG_IMAGE_URL, width: 1200, height: 630, alt: "AsogFLUX" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "AsogFLUX | 브랜드·디지털 경험 디자인 스튜디오",
     description: "브랜딩과 디지털 경험을 설계하는 비주얼 디자인 스튜디오.",
-    images: [{ url: "/images/og-image.png", width: 1200, height: 630, alt: "AsogFLUX" }],
+    images: [{ url: OG_IMAGE_URL, width: 1200, height: 630, alt: "AsogFLUX" }],
   },
   robots: {
     index: true,
