@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { asset } from "../lib/basePath";
 
 const NAV = [
   { href: "/#work", label: "WORK" },
@@ -11,7 +12,7 @@ const NAV = [
 const SCROLL_THRESHOLD = 60;
 const HEADER_HIDE_SCROLL_THRESHOLD = 50; // 이만큼 스크롤 내리면 헤더 숨김
 const TOP_BUTTON_IDLE_MS = 2500; // 마우스 멈춘 뒤 이 시간 지나면 상단 버튼 아래로 숨김
-const BG_MUSIC_SRC = "/audio/bg-music.mp3";
+const BG_MUSIC_SRC = asset("/audio/bg-music.mp3");
 const FADE_OUT_DURATION = 5; // 끝나기 5초 전부터 서서히 소리 감소
 const REPEAT_COUNT = 5; // 배경음악 반복 재생 횟수
 

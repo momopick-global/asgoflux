@@ -5,15 +5,16 @@ import { HeroVideoLayer } from "./components/HeroVideoLayer";
 import { InquiryForm } from "./components/InquiryForm";
 import { Footer } from "./components/Footer";
 import { TypingText } from "./components/TypingText";
+import { asset } from "./lib/basePath";
 
 const CONTENT_PADDING = "px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16";
 const CONTENT_MAX = "w-full";
 
 const WORK_IMAGES = [
-  "/images/work_brand_01.png",
-  "/images/work_brand_02.png",
-  "/images/work_brand_03.png",
-  "/images/work_brand_04.png",
+  asset("/images/work_brand_01.png"),
+  asset("/images/work_brand_02.png"),
+  asset("/images/work_brand_03.png"),
+  asset("/images/work_brand_04.png"),
 ];
 
 export default function Home() {

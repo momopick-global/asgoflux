@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { asset } from "../lib/basePath";
 
 /** 스크롤 구간(뷰포트 높이 비율) 안에서 동영상이 서서히 사라짐 */
 const FADE_START = 0.1;  // 이 구간부터 페이드 시작
 const FADE_END = 1.5;    // 이 구간에서 완전히 사라짐 (스크롤 거리 길게 = 더 천천히)
 
 const BG_VIDEOS = [
-  "/videos/bg1.mp4",
-  "/videos/bg2.mp4",
-  "/videos/bg3.mp4",
-  "/videos/bg4.mp4",
+  asset("/videos/bg1.mp4"),
+  asset("/videos/bg2.mp4"),
+  asset("/videos/bg3.mp4"),
+  asset("/videos/bg4.mp4"),
 ];
 
 export function HeroVideoLayer() {
@@ -63,7 +64,7 @@ export function HeroVideoLayer() {
 
   return (
     <div
-      className="fixed inset-0 z-0 transition-opacity duration-700"
+      className="fixed inset-0 z-0 bg-[#fafaf9] transition-opacity duration-700"
       style={{ opacity }}
       aria-hidden
     >
