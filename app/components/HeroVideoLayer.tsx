@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 /** 스크롤 구간(뷰포트 높이 비율) 안에서 동영상이 서서히 사라짐 */
 const FADE_START = 0.1;  // 이 구간부터 페이드 시작
 const FADE_END = 1.5;    // 이 구간에서 완전히 사라짐 (스크롤 거리 길게 = 더 천천히)
-const PAUSE_AT_SECONDS = 13;
 
 const BG_VIDEOS = [
   "/videos/bg1.mp4",
@@ -22,22 +21,6 @@ export function HeroVideoLayer() {
   }, []);
 
   const [opacity, setOpacity] = useState(1);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const onTimeUpdate = () => {
-      if (video.currentTime >= PAUSE_AT_SECONDS) {
-        video.pause();
-        video.currentTime = PAUSE_AT_SECONDS;
-      }
-    };
-
-    video.addEventListener("timeupdate", onTimeUpdate);
-    return () => video.removeEventListener("timeupdate", onTimeUpdate);
-  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -61,10 +44,10 @@ export function HeroVideoLayer() {
       aria-hidden
     >
       <video
-        ref={videoRef}
         autoPlay
         muted
         playsInline
+        loop
         className="h-full w-full object-cover"
       >
         <source src={videoSrc} type="video/mp4" />

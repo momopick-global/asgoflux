@@ -9,9 +9,11 @@ const NAV = [
 ];
 
 const SCROLL_THRESHOLD = 60;
-const IDLE_HIDE_MS = 2000;
+const HEADER_HIDE_SCROLL_THRESHOLD = 50; // 이만큼 스크롤 내리면 헤더 숨김
+const TOP_BUTTON_IDLE_MS = 2500; // 마우스 멈춘 뒤 이 시간 지나면 상단 버튼 아래로 숨김
 const BG_MUSIC_SRC = "/audio/bg-music.mp3";
 const FADE_OUT_DURATION = 5; // 끝나기 5초 전부터 서서히 소리 감소
+const REPEAT_COUNT = 5; // 배경음악 반복 재생 횟수
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,7 +26,10 @@ export function Header() {
   const [headerVisible, setHeaderVisible] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef(false);
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const playCountRef = useRef(0);
+  const lastScrollYRef = useRef(0);
+  const [topButtonVisible, setTopButtonVisible] = useState(true);
+  const topButtonHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const t = () => setTime(new Date().toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false }));
@@ -36,11 +41,20 @@ export function Header() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
+      const prev = lastScrollYRef.current;
       setScrolled(y > SCROLL_THRESHOLD);
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(max <= 0 ? 1 : Math.min(1, y / max));
+      // 스크롤 내리면 헤더 위로 숨김, 올리거나 상단이면 다시 표시
+      if (y > prev && y > HEADER_HIDE_SCROLL_THRESHOLD) {
+        setHeaderVisible(false);
+      } else if (y < prev || y <= HEADER_HIDE_SCROLL_THRESHOLD) {
+        setHeaderVisible(true);
+      }
+      lastScrollYRef.current = y;
     };
     onScroll();
+    lastScrollYRef.current = window.scrollY;
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -76,17 +90,27 @@ export function Header() {
     const audio = audioRef.current;
     if (!audio) return;
     if (soundOn) {
+      playCountRef.current = 0;
+      audio.currentTime = 0;
       audio.play().catch(() => setSoundOn(false));
     } else {
       audio.pause();
     }
   }, [soundOn]);
 
-  // 재생이 끝나면 헤더에 sound off 표시
+  // 5번 재생 후 끝나면 sound off, 그 전에는 반복 재생
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onEnded = () => setSoundOn(false);
+    const onEnded = () => {
+      playCountRef.current += 1;
+      if (playCountRef.current < REPEAT_COUNT) {
+        audio.currentTime = 0;
+        audio.play().catch(() => setSoundOn(false));
+      } else {
+        setSoundOn(false);
+      }
+    };
     audio.addEventListener("ended", onEnded);
     return () => audio.removeEventListener("ended", onEnded);
   }, []);
@@ -145,28 +169,25 @@ export function Header() {
     };
   }, []);
 
-  // 2초 동안 마우스·클릭·스크롤 없으면 헤더 숨김, 있으면 다시 표시
+  // 마우스 움직임 없으면 상단 버튼 아래로 숨김, 움직이면 다시 표시
   useEffect(() => {
     const show = () => {
-      setHeaderVisible(true);
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = null;
+      setTopButtonVisible(true);
+      if (topButtonHideTimerRef.current) {
+        clearTimeout(topButtonHideTimerRef.current);
+        topButtonHideTimerRef.current = null;
       }
-      hideTimerRef.current = setTimeout(() => setHeaderVisible(false), IDLE_HIDE_MS);
+      topButtonHideTimerRef.current = setTimeout(() => setTopButtonVisible(false), TOP_BUTTON_IDLE_MS);
     };
-
     show();
-
     window.addEventListener("mousemove", show);
-    window.addEventListener("click", show);
     window.addEventListener("scroll", show, { passive: true });
-
+    window.addEventListener("click", show);
     return () => {
       window.removeEventListener("mousemove", show);
-      window.removeEventListener("click", show);
       window.removeEventListener("scroll", show);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      window.removeEventListener("click", show);
+      if (topButtonHideTimerRef.current) clearTimeout(topButtonHideTimerRef.current);
     };
   }, []);
 
@@ -179,9 +200,7 @@ export function Header() {
         }`}
         style={{
           transform: headerVisible ? "translateY(0)" : "translateY(-100%)",
-          transition: headerVisible
-            ? "transform 0.3s ease-out, background-color 0.2s, border-color 0.2s"
-            : "transform 2.5s ease-out, background-color 0.2s, border-color 0.2s",
+          transition: "transform 0.35s ease-out, background-color 0.2s, border-color 0.2s",
         }}
       >
         <div className="flex h-14 w-full items-center justify-between px-4 sm:px-6 md:h-16 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
@@ -245,6 +264,22 @@ export function Header() {
           </div>
         )}
       </header>
+
+      {/* 상단으로 바로 가기: 오른쪽 하단 동그라미 + 위쪽 화살표. 마우스 멈추면 아래로 숨김 */}
+      <button
+        type="button"
+        onClick={() => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" })}
+        className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-black/20 bg-white text-black transition-transform duration-700 ease-in-out hover:border-black hover:bg-black hover:text-white md:bottom-8 md:right-8 md:h-14 md:w-14"
+        style={{
+          transform: topButtonVisible ? "translateY(0)" : "translateY(calc(100% + 2rem))",
+          pointerEvents: topButtonVisible ? "auto" : "none",
+        }}
+        aria-label="상단으로 이동"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+      </button>
 
       {menuOpen && (
         <div

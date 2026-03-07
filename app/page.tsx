@@ -26,12 +26,9 @@ export default function Home() {
         {/* Hero */}
         <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden pb-12 pt-0 text-left">
           <div className={`relative z-10 ${CONTENT_MAX} ${CONTENT_PADDING} w-full`}>
-            <h1
-              className="mt-12 w-full font-medium leading-[0.85] text-black mb-16 text-left"
-              style={{ fontSize: "clamp(3.5rem, 20vw, 12rem)", letterSpacing: "-0.04em" }}
-            >
+            <h1 className="mt-12 mb-16 w-full text-left font-medium leading-[0.9] text-black text-[clamp(6rem,34vw,18rem)] tracking-[-0.04em]">
               <TypingText
-                text="Designing structure and flow that drive decisions."
+                text="Designing flows that drive decisions."
                 speedMs={70}
                 startDelayMs={350}
                 cursorChar="|"
@@ -39,8 +36,8 @@ export default function Home() {
                 className="whitespace-pre-wrap"
               />
             </h1>
-            <p className="mt-4 w-full text-sm uppercase tracking-[0.35em] text-black/70 md:text-base">
-            화려함보다 구조, 감성보다 흐름. 선택을 만드는 디자인을 만듭니다.
+            <p className="mt-4 w-full text-sm uppercase tracking-normal text-black/70 md:text-base">
+            우리는 사람들이 자연스럽게 결정을 내릴 수 있도록 정보의 구조와 사용자 흐름을 설계합니다. 정보가 어떻게 보이고 상호작용이 어떻게 진행되는지를 디자인함으로써 사용자가 행동하도록 이끄는 경험을 만듭니다.
             </p>
             <p className="mt-2 text-xs uppercase tracking-widest text-black/50">keep scrolling</p>
           </div>
@@ -81,7 +78,7 @@ ASOGFLUX는 빠르게 이해되고, 자연스럽게 이동하며, 망설임 없�
           <div className={`${CONTENT_MAX} ${CONTENT_PADDING}`}>
             <h2
               className="font-medium leading-[0.8] tracking-tight text-black"
-              style={{ fontSize: "clamp(2.25rem, 20vw, 12em)" }}
+              style={{ fontSize: "clamp(1.25rem, 11vw, 6.5em)" }}
             >
               Selected projects <br/>shaping brands and <br/>digital experiences.
             </h2>
@@ -113,7 +110,7 @@ ASOGFLUX는 빠르게 이해되고, 자연스럽게 이동하며, 망설임 없�
           <div className={`${CONTENT_MAX} ${CONTENT_PADDING} w-full max-w-full text-right min-[1920px]:max-w-[60vw]`}>
           <p
               className="mt-8 text-left font-medium leading-[0.8] tracking-tight text-black"
-              style={{ fontSize: "clamp(2.25rem, 20vw, 12rem)" }}
+              style={{ fontSize: "clamp(1.25rem, 11vw, 6.5rem)" }}
             >Designing brands and digital experiences.
               
             </p>
@@ -131,7 +128,7 @@ ASOGFLUX는 빠르게 이해되고, 자연스럽게 이동하며, 망설임 없�
           <div className={`${CONTENT_MAX} ${CONTENT_PADDING} max-w-full lg:max-w-[60vw]`}>
           <p
               className="mt-0 text-left font-medium leading-[0.8] tracking-tight text-black"
-              style={{ fontSize: "clamp(2.25rem, 20vw, 12rem)" }}
+              style={{ fontSize: "clamp(1.25rem, 11vw, 6.5rem)" }}
             >Let's Talk
               
             </p>
